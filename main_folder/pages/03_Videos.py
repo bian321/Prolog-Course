@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 import streamlit.components.v1 as components
+st.title("🎥 المكتبة المرئية والمسموعة")
 
 
 st.header("🎧 بودكاست تعليمي")
@@ -14,7 +15,6 @@ st.write("في هذا البودكاست، نناقش أهمية لغة البر
 
 assets_path = "main_folder/assets" 
 
-st.title("🎥 المكتبة المرئية والمسموعة")
 st.subheader("📺 فيديو ")
 video_file_path = os.path.join(assets_path, "video1.mp4")
 
