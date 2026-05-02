@@ -15,15 +15,15 @@ else:
     st.error(f"الملف غير موجود في: {video_file_path}")
 
 
-import streamlit as st
 
 st.header("🎧 بودكاست تعليمي")
 
-# الرابط الجديد المباشر
-# لاحظي استخدمنا uc?id= بدلاً من export=download في البداية
-podcast_url = "https://drive.google.com/file/d/1wAQRGhUfzUDVTGh2jxilhj2RPcHZ4HyX/view?usp=sharing"
+# هذا هو الرابط المباشر الصحيح لملفك
+podcast_url = "https://drive.google.com/uc?export=download&id=1wAQRGhUfzUDVTGh2jxilhj2RPcHZ4HyX"
 
-# نستخدم st.audio مع تحديد النوع
-st.audio(podcast_url, format="audio/m4a")
-
+try:
+    st.audio(podcast_url)
+    st.success("تم تحميل البودكاست بنجاح!")
+except Exception as e:
+    st.error(f"حدث خطأ في تحميل الصوت: {e}")
 st.write("في هذا البودكاست، نناقش أهمية لغة البرولوج في الذكاء الاصطناعي.")
