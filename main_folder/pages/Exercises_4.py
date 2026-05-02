@@ -51,9 +51,24 @@ can_vote(Person) :-
     """, language="prolog")
 
 st.divider()
+st.divider()
 
-# نصيحة للمستقبل: محاكي البرولوج
-st.info("💡 نصيحة: بتقدري تضيفي رابط لـ **SWI-Prolog Online** عشان الطلاب يجربوا الكود تبعهم فوراً في المتصفح!")
+st.subheader("🚀 جرب الكود بنفسك!")
+st.write("عشان تتقن البرولوج، لازم تجرب تكتب الكود وتنفذه. افتح المختبر الأونلاين من الرابط تحت:")
 
-if st.button("🔗 افتح محاكي البرولوج أونلاين"):
-    st.markdown("[اضغط هنا للذهاب إلى SWISH Prolog](https://swish.swi-prolog.org/)")
+# استخدام رابط بدل زر لمنع مشاكل التنقل
+st.markdown("""
+<a href="https://swish.swi-prolog.org/" target="_blank" style="
+    text-decoration: none;
+    background-color: #ff4b4b;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    display: inline-block;
+">
+    🔗 افتح محاكي SWISH Prolog أونلاين
+</a>
+""", unsafe_allow_html=True)
+
+st.info("💡 نصيحة: انسخ كود 'شجرة العائلة' من التمرين الأول وجربه هناك!")
