@@ -14,16 +14,14 @@ else:
     # هاد السطر رح يساعدك تعرفي وين بايثون عم بيدوّر بالظبط لو لسه فيه مشكلة
     st.error(f"الملف غير موجود في: {video_file_path}")
 
+import streamlit.components.v1 as components
 
 
 st.header("🎧 بودكاست تعليمي")
 
-# هذا هو الرابط المباشر الصحيح لملفك
-podcast_url = "https://drive.google.com/uc?export=download&id=1wAQRGhUfzUDVTGh2jxilhj2RPcHZ4HyX"
 
-try:
-    st.audio(podcast_url)
-    st.success("تم تحميل البودكاست بنجاح!")
-except Exception as e:
-    st.error(f"حدث خطأ في تحميل الصوت: {e}")
+# تضمين مشغل Cloudinary
+cloudinary_embed_url = "https://player.cloudinary.com/embed/?cloud_name=dnaaujzam&public_id=audio1_q73mmw"
+
+components.iframe(cloudinary_embed_url, height=100)
 st.write("في هذا البودكاست، نناقش أهمية لغة البرولوج في الذكاء الاصطناعي.")
