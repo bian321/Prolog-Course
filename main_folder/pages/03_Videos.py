@@ -3,7 +3,7 @@ import os
 assets_path = "main_folder/assets" 
 
 st.title("🎥 المكتبة المرئية والمسموعة")
-st.subheader("📺 فيديو تعريفي")
+st.subheader("📺 فيديو ")
 video_file_path = os.path.join(assets_path, "video1.mp4")
 
 if os.path.exists(video_file_path):
