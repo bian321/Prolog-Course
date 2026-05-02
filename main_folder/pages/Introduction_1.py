@@ -1,5 +1,5 @@
 import streamlit as st
-
+import os
 # إعداد الصفحة
 st.set_page_config(page_title="المقدمة - عالم المنطق", page_icon="💡")
 
