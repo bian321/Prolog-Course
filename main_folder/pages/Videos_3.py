@@ -1,11 +1,17 @@
 import streamlit as st
 
 st.title("🎥 المكتبة المرئية والمسموعة")
+st.subheader("📺 فيديو تعريفي")
+video_file_path = os.path.join(assets_path, "video1.mp4")
 
-st.header("1. مقدمة شاملة (فيديو)")
-st.video("https://app.steve.ai/video/3ZS4I0K4GHMKFO0O") 
+if os.path.exists(video_file_path):
+    video_file = open(video_file_path, 'rb')
+    video_bytes = video_file.read()
+    st.video(video_bytes)
+else:
+    # هاد السطر رح يساعدك تعرفي وين بايثون عم بيدوّر بالظبط لو لسه فيه مشكلة
+    st.error(f"الملف غير موجود في: {video_file_path}")
 
-st.divider()
 
 st.header("🎧 بودكاست تعليمي")
 
