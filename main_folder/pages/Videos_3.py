@@ -21,7 +21,7 @@ st.header("🎧 بودكاست تعليمي")
 
 # الرابط الجديد المباشر
 # لاحظي استخدمنا uc?id= بدلاً من export=download في البداية
-podcast_url = "https://docs.google.com/uc?id=1wAQRGhUfzUDVTGh2jxilhj2RPcHZ4HyX"
+podcast_url = "https://drive.google.com/file/d/1wAQRGhUfzUDVTGh2jxilhj2RPcHZ4HyX/view?usp=sharing"
 
 # نستخدم st.audio مع تحديد النوع
 st.audio(podcast_url, format="audio/m4a")
