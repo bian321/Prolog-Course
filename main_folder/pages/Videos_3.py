@@ -1,4 +1,6 @@
 import streamlit as st
+import os
+assets_path = "main_folder/assets" 
 
 st.title("🎥 المكتبة المرئية والمسموعة")
 st.subheader("📺 فيديو تعريفي")
