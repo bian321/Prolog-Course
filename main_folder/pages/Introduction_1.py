@@ -11,7 +11,8 @@ st.markdown("""
 على عكس اللغات اللي بنعرفها (مثل Python أو Java) اللي بنحكي فيها للكمبيوتر "كيف" يحل المشكلة، في البرولوج بنحكي للكمبيوتر "شو" هي المشكلة وهوه بيحلها!
 """)
 
-# إضافة فيديو توضيحي (من مجلد assets أو رابط)
+assets_path = "main_folder/assets" 
+
 st.subheader("📺 فيديو تعريفي")
 video_file_path = os.path.join(assets_path, "video1.mp4")
 
@@ -20,9 +21,8 @@ if os.path.exists(video_file_path):
     video_bytes = video_file.read()
     st.video(video_bytes)
 else:
-    st.error("عذراً، ملف الفيديو غير موجود في مجلد assets")
-
-st.divider()
+    # هاد السطر رح يساعدك تعرفي وين بايثون عم بيدوّر بالظبط لو لسه فيه مشكلة
+    st.error(f"الملف غير موجود في: {video_file_path}")
 
 ### الفرق الجوهري (مهم جداً للفهم)
 st.subheader("🤔 كيف بتفكر لغة البرولوج؟")
