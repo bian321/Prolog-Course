@@ -13,7 +13,14 @@ st.markdown("""
 
 # إضافة فيديو توضيحي (من مجلد assets أو رابط)
 st.subheader("📺 فيديو تعريفي")
-st.video("https://app.steve.ai/video/3ZS4I0K4GHMKFO0O") 
+video_file_path = os.path.join(assets_path, "video1.mp4")
+
+if os.path.exists(video_file_path):
+    video_file = open(video_file_path, 'rb')
+    video_bytes = video_file.read()
+    st.video(video_bytes)
+else:
+    st.error("عذراً، ملف الفيديو غير موجود في مجلد assets")
 
 st.divider()
 
