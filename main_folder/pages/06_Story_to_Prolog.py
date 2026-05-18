@@ -13,10 +13,14 @@ if "GOOGLE_API_KEY" not in st.secrets:
 
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
-# إعداد النموذج
 @st.cache_resource
 def load_model():
-    return genai.GenerativeModel('gemini-pro')
+    try:
+        models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
+        return genai.GenerativeModel(models[0]) if models else None
+    except: return None
+
+
 
 model = load_model()
 
