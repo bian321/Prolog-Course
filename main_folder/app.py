@@ -70,14 +70,10 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# 3. إعداد نموذج Gemini بالمكتبة الجديدة النظيفة
-# 3. إعداد نموذج Groq الذكي والأسرع عالمياً
+# 3. دالة الاتصال بمحرك Groq الذكي والسريع
 if "GROQ_API_KEY" not in st.secrets:
     st.error("⚠️ تأكدي من وجود مفتاح GROQ_API_KEY في إعدادات Secrets الخاصة بـ Streamlit")
     st.stop()
-
-# رح نستخدم مكتبة requests العادية عشان نبعث لجروك مباشرة بدون تعقيد مكتبات
-import requests
 
 def generate_groq_content(system_prompt, user_prompt):
     try:
@@ -87,7 +83,6 @@ def generate_groq_content(system_prompt, user_prompt):
             "Content-Type": "application/json"
         }
         data = {
-            # موديل لاما 3 القوي من شركة ميتا والمجاني بالكامل على جروك
             "model": "llama3-8b-8192", 
             "messages": [
                 {"role": "system", "content": system_prompt},
@@ -99,8 +94,6 @@ def generate_groq_content(system_prompt, user_prompt):
         return response.json()['choices'][0]['message']['content']
     except Exception as e:
         return f"⚠️ حدث خطأ في الاتصال بمحرك الاستدلال: {e}"
-
-client = get_ai_client()
 
 # 4. تصميم الهيكل الرئيسي للموقع (العناوين والتبويبات)
 st.markdown('<h1 class="main-title">🧩 منصة PrologLogic التعليمية</h1>', unsafe_allow_html=True)
@@ -145,10 +138,10 @@ female(sara).               % سارة أنثى
 is_happy(X) :- likes(X, prolog).
     """, language="prolog")
 
-# ==================== التبويب الثالث: محلل القصص المنطقي ====================
+# ==================== التبويب الثالث: محلل القصص المنطقي (جدول الأنساب) ====================
 with tab3:
     st.subheader("📖 المحلل المنطقي للقصص والنصوص الشريفة")
-    st.write("اكتب قصة (مثل قصة عائلية، أو نسب من قصص الأنبياء) وسيقوم الذكاء الاصطناعي بتحويلها فوراً إلى منطق برولوج، مع استخراج شجرة العلاقات كجدول مرتب!")
+    st.write("اكتب قصة وسيقوم الذكاء الاصطناعي بتحويلها فوراً إلى منطق برولوج، مع استخراج شجرة العلاقات كجدول مرتب!")
 
     system_prompt_story = """
     أنت خبير ومحلل منطقي متقدم في لغة Prolog ومتخصص في تحليل النصوص الشريفة والقصص.
@@ -157,6 +150,7 @@ with tab3:
     2. صغ مثالاً لسؤال (Query) يمكن طرحه على هذا الكود.
     3. اشرح خطوة بخطوة كيف يقوم برولوغ بالتراجع المنطقي (Backtracking) لحل السؤال.
     4. في نهاية ردك، صمم جدول Markdown واضح يوضح العلاقات العائلية والأنساب المستخرجة بأعمدة: (الشخص الأول | صلة القرابة | الشخص الثاني).
+    تحدث باللغة العربية.
     """
 
     if "story_messages" not in st.session_state:
@@ -173,23 +167,15 @@ with tab3:
 
         with st.chat_message("assistant"):
             with st.spinner("جاري تحليل النص منطقياً واستخراج جدول العلاقات..."):
-                if client:
-                    try:
-                        # 🔴 تم التعديل هنا: استخدام اسم الموديل المتوافق تماماً مع المكتبة الجديدة
-                        response = client.models.generate_content(
-                            model='gemini-2.5-flash',
-                            contents=f"{system_prompt_story}\n\nالنص: {story_prompt}"
-                        )
-                        st.markdown(response.text)
-                        st.session_state.story_messages.append({"role": "assistant", "content": response.text})
-                    except Exception as e:
-                        st.error(f"خطأ في الاتصال بالسيرفر: {e}")
+                response_text = generate_groq_content(system_prompt_story, story_prompt)
+                st.markdown(response_text)
+                st.session_state.story_messages.append({"role": "assistant", "content": response_text})
 
 # ==================== التبويب الرابع: المعلم الخصوصي الذكي ====================
 with tab4:
     st.subheader("🤖 معلم البرولوج الأكاديمي الخصوصي")
     
-    system_prompt_tutor = "أنت خبير أكاديمي متخصص في لغة البرمجة المنطقية Prolog فقط. اشرح المفاهيم وحل المشكلات البرمجية بالعربية وبأسلوب ممتع."
+    system_prompt_tutor = "أنت خبير أكاديمي متخصص في لغة البرمجة المنطقية Prolog فقط. اشرح المفاهيم وحل المشكلات البرمجية بالعربية وبأسلوب ممتع ونظم الأكواد."
 
     if "tutor_messages" not in st.session_state:
         st.session_state.tutor_messages = [{"role": "assistant", "content": "مرحباً بك! أنا معلمك الخاص بلغة Prolog. كيف يمكنني مساعدتك اليوم؟"}]
@@ -205,17 +191,9 @@ with tab4:
 
         with st.chat_message("assistant"):
             with st.spinner("جاري صياغة الإجابة..."):
-                if client:
-                    try:
-                        # 🔴 تم التعديل هنا: استخدام الموديل الصحيح
-                        response = client.models.generate_content(
-                            model='gemini-2.5-flash',
-                            contents=f"{system_prompt_tutor}\n\nسؤال الطالب: {tutor_prompt}"
-                        )
-                        st.markdown(response.text)
-                        st.session_state.tutor_messages.append({"role": "assistant", "content": response.text})
-                    except Exception as e:
-                        st.error(f"خطأ: {e}")
+                response_text = generate_groq_content(system_prompt_tutor, tutor_prompt)
+                st.markdown(response_text)
+                st.session_state.tutor_messages.append({"role": "assistant", "content": response_text})
 
 # ==================== التبويب الخامس: مختبر برولوغ الحي والتفاعلي ====================
 with tab5:
@@ -245,25 +223,11 @@ grandfather(X, Y) :- parent(X, Z), parent(Z, Y)."""
         أمامك قاعدة معرفة كتبها الطالب، واستعلام. قيم الاستعلام بناءً على القواعد فقط:
         1. ابدأ بكلمة "النتيجة:" واكتب إما 'true.' أو 'false.'.
         2. تحتها، اكتب عنوان "🔍 مسار التراجع المنطقي (Backtracking Trace):" واشرح للطالب باللغة العربية البسيطة كيف طابق المحرك المتغيرات وانتقل بين الشروط للوصول للحل.
-        
-        قاعدة المعرفة:
-        {user_kb}
-        
-        الاستعلام المطلوب حله:
-        {user_query}
         """
         
         with st.spinner("جاري تشغيل محرك برولوغ بالخلفية..."):
-            if client:
-                try:
-                    # 🔴 تم التعديل هنا: استخدام الموديل الصحيح لفك اللغز
-                    response = client.models.generate_content(
-                        model='gemini-2.5-flash',
-                        contents=engine_instruction
-                    )
-                    st.info(response.text)
-                except Exception as e:
-                    st.error(f"حدث خطأ في محرك الاستنتاج: {e}")
+            response_text = generate_groq_content(engine_instruction, f"قاعدة المعرفة:\n{user_kb}\n\nالاستعلام:\n{user_query}")
+            st.info(response_text)
                     
     st.divider()
     st.markdown("### 📝 تمارين تطبيقية استرشادية")
@@ -272,6 +236,6 @@ grandfather(X, Y) :- parent(X, Z), parent(Z, Y)."""
 
 # 5. القائمة الجانبية الثابتة
 with st.sidebar:
-    st.image("https://upload.wikimedia.org/wikipedia/commons/2/22/Prolog_logo.png", width=120)
+    st.image("", width=120)
     st.markdown("### 🎓 مشروع السيمناريون")
     st.info("📌 **تحت إشراف:** د. أمجد سيف\n\n🎯 **تطوير الطالبة:** بيان ابو شيخه\n\n📚 تخصص: علم الحاسوب والتربية غير المنهجية (السنة الثالثة)")
