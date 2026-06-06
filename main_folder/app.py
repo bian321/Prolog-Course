@@ -97,13 +97,12 @@ model = load_model()
 st.markdown('<h1 class="main-title">🧩 منصة PrologLogic التعليمية</h1>', unsafe_allow_html=True)
 st.markdown('<p class="sub-title">رحلتك التفاعلية لتعلم البرمجة المنطقية وتحليل الأنساب والقصص</p>', unsafe_allow_html=True)
 
-# تقسيم الموقع إلى تبويبات فخمة (Tabs) بدل الملفات الكثيرة
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "💡 المقدمة والأساسيات", 
     "🏗️ الحقائق والقواعد", 
     "📖 محلل القصص الذكي", 
     "🤖 المعلم الخصوصي", 
-    "📝 التمارين والمختبر"
+    "💻 مختبر برولوغ الحي"
 ])
 
 # ==================== التبويب الأول: المقدمة والأساسيات ====================
@@ -160,10 +159,10 @@ is_happy(X) :- likes(X, prolog).
         st.markdown("**إجابة محرك البرولوج:**")
         st.success("true.")
 
-# ==================== التبويب الثالث: محلل القصص المنطقي (الآيات والأنساب) ====================
+# ==================== التبويب الثالث: محلل القصص المنطقي (جدول الأنساب) ====================
 with tab3:
     st.subheader("📖 المحلل المنطقي للقصص والنصوص الشريفة")
-    st.write("اكتب قصة (مثل قصة عائلية، أو نسب من قصص الأنبياء، أو آيات المواريث) وسيقوم الذكاء الاصطناعي بتحويلها فوراً إلى منطق برولوج مع شرح التراجع (Backtracking)!")
+    st.write("اكتب قصة (مثل قصة عائلية، أو نسب من قصص الأنبياء، أو آيات المواريث) وسيقوم الذكاء الاصطناعي بتحويلها فوراً إلى منطق برولوج، مع استخراج شجرة العلاقات كجدول مرتب!")
 
     system_prompt_story = """
     أنت خبير ومحلل منطقي متقدم جداً في لغة Prolog ومتخصص في تحليل النصوص الشريفة (آيات قرآنية، قصص الأنبياء، وأحكام المواريث والأنساب).
@@ -171,6 +170,7 @@ with tab3:
     1. اكتب كود Prolog للحقائق (Facts) والقواعد (Rules) المستخرجة داخل بلوك كود نظيف: ```prolog ... ```
     2. صغ مثالاً لسؤال (Query) يمكن طرحه على هذا الكود.
     3. اشرح للمستخدم بالعربي البسيط خطوة بخطوة كيف يقوم محرك البرولوج بالاستنتاج والتراجع (Backtracking) لحل هذا السؤال لتبسيط المفهوم الأكاديمي.
+    4. في نهاية ردك، قم بعمل جدول Markdown يوضح العلاقات العائلية والأنساب المستخرجة بأعمدة واضحة: (الشخص الأول | صلة القرابة | الشخص الثاني).
     تحدث بلغة عربية سلسة وواضحة جداً، واجعل الرموز البرمجية الإنجليزية معزولة لتكون مرتبة.
     """
 
@@ -187,11 +187,14 @@ with tab3:
             st.markdown(story_prompt)
 
         with st.chat_message("assistant"):
-            with st.spinner("جاري تحليل النص منطقياً برمز البرولوج..."):
-                full_instruction = f"{system_prompt_story}\n\nالنص الحالي للتحليل: {story_prompt}"
-                response = model.generate_content(full_instruction)
-                st.markdown(response.text)
-                st.session_state.story_messages.append({"role": "assistant", "content": response.text})
+            with st.spinner("جاري تحليل النص منطقياً واستخراج جدول العلاقات..."):
+                try:
+                    full_instruction = f"{system_prompt_story}\n\nالنص الحالي للتحليل: {story_prompt}"
+                    response = model.generate_content(full_instruction)
+                    st.markdown(response.text)
+                    st.session_state.story_messages.append({"role": "assistant", "content": response.text})
+                except Exception as e:
+                    st.warning("⚠️ محرك الـ API مضغوط حالياً بسبب كثرة الطلبات المتتالية. الرجاء الانتظار نصف دقيقة وإرسال النص مجدداً للتحليل.")
 
 # ==================== التبويب الرابع: المعلم الخصوصي الذكي ====================
 with tab4:
@@ -214,77 +217,80 @@ with tab4:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
 
-    if tutor_prompt := st.chat_input("اسألني: كيف أكتب قاعدة الـ Recursion في البرولوج؟", key="tutor_input"):
+    if tutor_prompt := st.chat_input("اسألني: كيف أكتب قاعدة الـ Recursion في البرولوج? ", key="tutor_input"):
         st.session_state.tutor_messages.append({"role": "user", "content": tutor_prompt})
         with st.chat_message("user"):
             st.markdown(tutor_prompt)
 
         with st.chat_message("assistant"):
             with st.spinner("جاري صياغة الإجابة الأكاديمية المنظمة..."):
-                full_prompt = f"{system_prompt_tutor}\n\nسؤال الطالب: {tutor_prompt}"
-                response = model.generate_content(full_prompt)
-                st.markdown(response.text)
-                st.session_state.tutor_messages.append({"role": "assistant", "content": response.text})
+                try:
+                    full_prompt = f"{system_prompt_tutor}\n\nسؤال الطالب: {tutor_prompt}"
+                    response = model.generate_content(full_prompt)
+                    st.markdown(response.text)
+                    st.session_state.tutor_messages.append({"role": "assistant", "content": response.text})
+                except Exception as e:
+                    st.warning("⚠️ السيرفر مشغول حالياً بطلبات أخرى. الرجاء الانتظار قليلاً ثم إعادة كتابة سؤالك.")
 
-# ==================== التبويب الخامس: التمارين والمختبر المباشر ====================
+# ==================== التبويب الخامس: مختبر برولوغ التفاعلي والمباشر ====================
 with tab5:
-    st.subheader("📝 اختبر فهمك وتدرب عملياً")
-    st.write("أفضل طريقة لإتقان البرمجة المنطقية هي التجربة الذاتية. حاول حل التمارين التالية وقارن حلك:")
+    st.subheader("💻 مختبر برولوغ الحي والتفاعلي")
+    st.write("اكتبي قواعدكِ وحقائقكِ بالأسفل، واطرحي سؤالكِ (Query) لتري النتيجة الحية مباشرة وكيف يفكر المحرك دون الحاجة لفتح مواقع خارجية!")
     
-    st.divider()
-    st.markdown("#### 🎯 التمرين الأول: صلة الأخت (Sister Rule)")
-    st.write("""
-    بفرض لديك الحقائق التالية:
-    * `parent(mohammad, bayan).`
-    * `parent(mohammad, ali).`
-    * `female(bayan).`
+    # تقسيم الشاشة لجزأين: إدخال الكود والاستعلام
+    col_code, col_query = st.columns([2, 1])
     
-    **المطلوب:** اكتب قاعدة `sister(X, Y)` التي تستنتج إن كانت X هي أخت Y.
-    """)
-    if st.button("👁️ إظهار حل التمرين الأول"):
-        st.code("""
-sister(X, Y) :- 
-    female(X), 
-    parent(P, X), 
-    parent(P, Y), 
-    X \\== Y.  % للتأكد أن الأخت ليست أختاً لنفسها أثناء التراجع
-        """, language="prolog")
-        
-    st.divider()
-    st.markdown("#### 🎯 التمرين الثاني: شروط السن الحسابي")
-    st.write("""
-    اكتب قاعدة `can_vote(Person)` لمعرفة هل يحق للشخص التصويت بناءً على عمره (18 سنة فما فوق):
-    * `age(bayan, 21).`
-    * `age(sami, 15).`
-    """)
-    if st.button("👁️ إظهار حل التمرين الثاني"):
-        st.code("""
-can_vote(Person) :- 
-    age(Person, Age), 
-    Age >= 18.
-        """, language="prolog")
+    with col_code:
+        st.markdown("**1. اكتب قاعدة المعرفة هنا (Knowledge Base):**")
+        default_kb = """parent(khaled, omar).
+parent(omar, zayed).
+parent(omar, sara).
 
+grandfather(X, Y) :- parent(X, Z), parent(Z, Y)."""
+        user_kb = st.text_area("أكواد البرولوج (Facts & Rules)", value=default_kb, height=180, help="اكتب الحقائق والقواعد بالإنجليزية")
+        
+    with col_query:
+        st.markdown("**2. اطرح سؤالك المنطقي:**")
+        user_query = st.text_input("الاستعلام (Query)", value="grandfather(khaled, zayed).", help="مثال: grandfather(khaled, zayed).")
+        st.write("")
+        run_btn = st.button("🚀 تشغيل وتحليل الكود حياً")
+
+    # تشغيل المحاكي المنطقي المباشر عند الضغط على الزر
+    if run_btn:
+        st.markdown("### 🎯 نتيجة التنفيذ الفورية:")
+        
+        engine_instruction = f"""
+        أنت الآن تعمل كمحرك استدلال منطقي صارم للغة برولوغ (Prolog Inference Engine).
+        أمامك قاعدة معرفة (Knowledge Base) كتبها الطالب، واستعلام (Query).
+        
+        قاعدة المعرفة:
+        {user_kb}
+        
+        الاستعلام المطلوب حله:
+        {user_query}
+        
+        قم بتقييم الاستعلام بناءً على القواعد المعطاة فقط:
+        1. ابدأ بكلمة "النتيجة:" واكتب إما 'true.' أو 'false.' أو اسم المتغير إذا كان الاستعلام يبحث عن مجهول (مثل X = omar).
+        2. تحتها، اكتب عنوان "🔍 مسار التراجع المنطقي (Backtracking Trace):" واشرح للطالب باللغة العربية البسيطة والمستقيمة كيف قام المحرك بمطابقة المتغيرات والانتقال من شرط إلى شرط خطوة بخطوة للوصول للحل.
+        """
+        
+        with st.spinner("جاري تشغيل محرك برولوغ الاستدلالي بالخلفية..."):
+            try:
+                engine_response = model.generate_content(engine_instruction)
+                st.info(engine_response.text)
+            except Exception as e:
+                st.warning("⚠️ تخطينا الحد المسموح به للمفتاح المجاني حالياً. يرجى الانتظار 30 ثانية لتفريغ الذاكرة ثم الضغط على زر التشغيل مرة أخرى.")
+                
     st.divider()
-    st.subheader("🚀 المختبر البرمجي الحي أونلاين")
-    st.write("انسخي الأكواد السابقة وجربيها مباشرة في المحاكي العالمي المعتمد لبرولوج لتري النتيجة الحية:")
+    st.markdown("### 📝 تمارين تطبيقية استرشادية")
     
-    st.markdown("""
-    <div style="text-align: center; margin-top: 15px;">
-        <a href="https://swish.swi-prolog.org/" target="_blank" style="
-            text-decoration: none;
-            background-color: #2196F3;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-family: 'Cairo', sans-serif;
-            display: inline-block;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        ">
-            🔗 افتح محاكي SWISH Prolog أونلاين
-        </a>
-    </div>
-    """, unsafe_allow_html=True)
+    with st.expander("🎯 التمرين الأول: صلة الأخت (Sister Rule)"):
+        st.write("الحقائق: `parent(mohammad, bayan).` و `parent(mohammad, ali).` و `female(bayan).` والقاعدة:")
+        st.code("""sister(X, Y) :- female(X), parent(P, X), parent(P, Y), X \\== Y.""", language="prolog")
+        
+    with st.expander("🎯 التمرين الثاني: شروط السن الحسابي (Voting)"):
+        st.write("القاعدة لمعرفة هل يحق للشخص التصويت بناءً على عمره (18 سنة فما فوق):")
+        st.code("""can_vote(Person) :- age(Person, Age), Age >= 18.""", language="prolog")
 
 # 5. معلومات إضافية ثابتة في الشاشة الجانبية لتعزيز العرض
 with st.sidebar:
