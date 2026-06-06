@@ -86,8 +86,8 @@ genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 @st.cache_resource
 def load_model():
     try:
-        models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-        return genai.GenerativeModel(models[0]) if models else None
+        # تثبيت اسم الموديل مباشرة بدل طلب اللستة كل مرة
+        return genai.GenerativeModel('gemini-1.5-flash')
     except:
         return None
 
