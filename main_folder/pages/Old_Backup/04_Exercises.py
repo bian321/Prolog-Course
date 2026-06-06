@@ -50,25 +50,31 @@ can_vote(Person) :-
     Age >= 18.
     """, language="prolog")
 
+
+
 st.divider()
-st.divider()
+st.subheader("💻 مختبر برولوغ الحي (جرب كودك هنا!)")
+st.write("اكتب القواعد والحقائق بالأسفل، واطرح سؤالك (Query) لترى النتيجة الفورية:")
 
-st.subheader("🚀 جرب الكود بنفسك!")
-st.write("عشان تتقن البرولوج، لازم تجرب تكتب الكود وتنفذه. افتح المختبر الأونلاين من الرابط تحت:")
+# تقسيم الشاشة لجزأين
+col_code, col_query = st.columns([2, 1])
 
-# استخدام رابط بدل زر لمنع مشاكل التنقل
-st.markdown("""
-<a href="https://swish.swi-prolog.org/" target="_blank" style="
-    text-decoration: none;
-    background-color: #ff4b4b;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-weight: bold;
-    display: inline-block;
-">
-    🔗 افتح محاكي SWISH Prolog أونلاين
-</a>
-""", unsafe_allow_html=True)
+with col_code:
+    default_kb = """parent(khaled, omar).
+parent(omar, zayed).
+grandfather(X, Y) :- parent(X, Z), parent(Z, Y)."""
+    user_kb = st.text_area("أكواد البرولوج (Facts & Rules)", value=default_kb, height=150)
+    
+with col_query:
+    user_query = st.text_input("الاستعلام (Query)", value="grandfather(khaled, zayed).")
+    run_btn = st.button("🚀 تشغيل المنطق حياً")
 
-st.info("💡 نصيحة: انسخ كود 'شجرة العائلة' من التمرين الأول وجربه هناك!")
+if run_btn:
+    # إرسال الكود لجيميني ليقوم بدور محرك البروليرغ الصارم ويحسب النتيجة حياً أمام اللجنة
+    engine_instruction = f"أنت محرك استدلال منطقي لغة برولوغ (Prolog Engine). قيم هذا الاستعلام بناءً على القواعد فقط. قاعدة المعرفة:\n{user_kb}\n\nالاستعلام:\n{user_query}\n\nأعط النتيجة كـ true أو false مع شرح التراجع (Backtracking) بالعربية."
+    with st.spinner("جاري التقييم..."):
+        try:
+            engine_response = model.generate_content(engine_instruction)
+            st.info(engine_response.text)
+        except Exception as e:
+            st.error(f"خطأ: {e}")
