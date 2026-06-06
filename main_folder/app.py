@@ -83,7 +83,8 @@ def generate_groq_content(system_prompt, user_prompt):
             "Content-Type": "application/json"
         }
         data = {
-            "model": "llama3-8b-8192", 
+            # 🔴 تم التعديل هنا لاسم الموديل المعتمد والمستقر مجاناً
+            "model": "llama-3.3-70b-versatile", 
             "messages": [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
@@ -94,7 +95,6 @@ def generate_groq_content(system_prompt, user_prompt):
         return response.json()['choices'][0]['message']['content']
     except Exception as e:
         return f"⚠️ حدث خطأ في الاتصال بمحرك الاستدلال: {e}"
-
 # 4. تصميم الهيكل الرئيسي للموقع (العناوين والتبويبات)
 st.markdown('<h1 class="main-title">🧩 منصة PrologLogic التعليمية</h1>', unsafe_allow_html=True)
 st.markdown('<p class="sub-title">رحلتك التفاعلية لتعلم البرمجة المنطقية وتحليل الأنساب والقصص</p>', unsafe_allow_html=True)
