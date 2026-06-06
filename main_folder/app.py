@@ -12,7 +12,7 @@ st.set_page_config(
 # 2. كود الـ CSS السحري لحل مشكلة تداخل العربي والإنجليزي وضبط الخطوط والألوان
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght=400;700&display=swap');
     
     html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
         font-family: 'Cairo', sans-serif !important;
@@ -78,7 +78,6 @@ if "GOOGLE_API_KEY" not in st.secrets:
 @st.cache_resource
 def get_ai_client():
     try:
-        # استخدام المكتبة الحديثة من جوجل المتوافقة مع تحديثات 2026
         return genai.Client(api_key=st.secrets["GOOGLE_API_KEY"])
     except:
         return None
@@ -128,7 +127,7 @@ female(sara).               % سارة أنثى
 is_happy(X) :- likes(X, prolog).
     """, language="prolog")
 
-# ==================== التبويب الثالث: محلل القصص المنطقي (شجرة الأنساب والجدول) ====================
+# ==================== التبويب الثالث: محلل القصص المنطقي ====================
 with tab3:
     st.subheader("📖 المحلل المنطقي للقصص والنصوص الشريفة")
     st.write("اكتب قصة (مثل قصة عائلية، أو نسب من قصص الأنبياء) وسيقوم الذكاء الاصطناعي بتحويلها فوراً إلى منطق برولوج، مع استخراج شجرة العلاقات كجدول مرتب!")
@@ -158,8 +157,9 @@ with tab3:
             with st.spinner("جاري تحليل النص منطقياً واستخراج جدول العلاقات..."):
                 if client:
                     try:
+                        # 🔴 تم التعديل هنا: استخدام اسم الموديل المتوافق تماماً مع المكتبة الجديدة
                         response = client.models.generate_content(
-                            model='gemini-1.5-flash',
+                            model='gemini-2.5-flash',
                             contents=f"{system_prompt_story}\n\nالنص: {story_prompt}"
                         )
                         st.markdown(response.text)
@@ -189,8 +189,9 @@ with tab4:
             with st.spinner("جاري صياغة الإجابة..."):
                 if client:
                     try:
+                        # 🔴 تم التعديل هنا: استخدام الموديل الصحيح
                         response = client.models.generate_content(
-                            model='gemini-1.5-flash',
+                            model='gemini-2.5-flash',
                             contents=f"{system_prompt_tutor}\n\nسؤال الطالب: {tutor_prompt}"
                         )
                         st.markdown(response.text)
@@ -237,8 +238,9 @@ grandfather(X, Y) :- parent(X, Z), parent(Z, Y)."""
         with st.spinner("جاري تشغيل محرك برولوغ بالخلفية..."):
             if client:
                 try:
+                    # 🔴 تم التعديل هنا: استخدام الموديل الصحيح لفك اللغز
                     response = client.models.generate_content(
-                        model='gemini-1.5-flash',
+                        model='gemini-2.5-flash',
                         contents=engine_instruction
                     )
                     st.info(response.text)
@@ -254,4 +256,4 @@ grandfather(X, Y) :- parent(X, Z), parent(Z, Y)."""
 with st.sidebar:
     st.image("https://upload.wikimedia.org/wikipedia/commons/2/22/Prolog_logo.png", width=120)
     st.markdown("### 🎓 مشروع السيمناريون")
-    st.info("📌 **تحت إشراف:** د. أمجد سيف\n\n🎯 **تطوير الطالبة:** بيان ابو شيخه \n\n📚 تخصص: علم الحاسوب والتربية غير المنهجية (السنة الثالثة)")
+    st.info("📌 **تحت إشراف:** د. أمجد سيف\n\n🎯 **تطوير الطالبة:** بيان ابو شيخه\n\n📚 تخصص: علم الحاسوب والتربية غير المنهجية (السنة الثالثة)")
