@@ -236,7 +236,8 @@ grandfather(X, Y) :- parent(X, Z), parent(Z, Y)."""
 
 # 5. القائمة الجانبية الثابتة
 with st.sidebar:
-st.image("main_folder/assets/prolog.png", width=120)
+try:
+        st.image("main_folder/assets/prolog.png", width=120)
     except:
         st.image("assets/prolog.png", width=120)
         st.markdown("### 🎓 مشروع السيمناريون")
