@@ -1,5 +1,5 @@
 import streamlit as st
-from google import genai
+import requests
 import os
 
 # 1. إعداد الصفحة الأساسي
@@ -71,16 +71,34 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # 3. إعداد نموذج Gemini بالمكتبة الجديدة النظيفة
-if "GOOGLE_API_KEY" not in st.secrets:
-    st.error("⚠️ تأكدي من وجود مفتاح GOOGLE_API_KEY في إعدادات Secrets الخاصة بـ Streamlit")
+# 3. إعداد نموذج Groq الذكي والأسرع عالمياً
+if "GROQ_API_KEY" not in st.secrets:
+    st.error("⚠️ تأكدي من وجود مفتاح GROQ_API_KEY في إعدادات Secrets الخاصة بـ Streamlit")
     st.stop()
 
-@st.cache_resource
-def get_ai_client():
+# رح نستخدم مكتبة requests العادية عشان نبعث لجروك مباشرة بدون تعقيد مكتبات
+import requests
+
+def generate_groq_content(system_prompt, user_prompt):
     try:
-        return genai.Client(api_key=st.secrets["GOOGLE_API_KEY"])
-    except:
-        return None
+        url = "https://api.groq.com/openai/v1/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {st.secrets['GROQ_API_KEY']}",
+            "Content-Type": "application/json"
+        }
+        data = {
+            # موديل لاما 3 القوي من شركة ميتا والمجاني بالكامل على جروك
+            "model": "llama3-8b-8192", 
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            "temperature": 0.2
+        }
+        response = requests.post(url, headers=headers, json=data)
+        return response.json()['choices'][0]['message']['content']
+    except Exception as e:
+        return f"⚠️ حدث خطأ في الاتصال بمحرك الاستدلال: {e}"
 
 client = get_ai_client()
 
